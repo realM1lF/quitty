@@ -14,11 +14,12 @@ import {
   Mail,
   MapPin,
   Plus,
+  Trash2,
   X,
 } from 'lucide-react'
-import { PrimarButton, SekundarButton, TextField, useSnackbar } from '@/components/ui-ext'
+import { ConfirmDialog, PrimarButton, SekundarButton, TextField, useSnackbar } from '@/components/ui-ext'
 import { useAuth } from '@/lib/auth'
-import { listReceipts, saveSettings } from '@/lib/db'
+import { listReceipts, resetDemoDaten, saveSettings } from '@/lib/db'
 import { geocode } from '@/lib/geo'
 import { gleicherZeitraum, zeitraumFilter, zeitraumLabel } from '@/lib/zeitraum'
 import type { Zeitraum } from '@/lib/zeitraum'
@@ -527,6 +528,8 @@ export default function Einstellungen() {
 
   // --- Abschnitt 4: Konto & App ---
   const [dialogOffen, setDialogOffen] = useState(false)
+  // --- Abschnitt 5: App zurücksetzen (nur Demo-Modus) ---
+  const [resetDialogOffen, setResetDialogOffen] = useState(false)
 
   async function abmelden() {
     await signOut()
@@ -760,6 +763,27 @@ export default function Einstellungen() {
             Zum Home-Bildschirm hinzufügen
           </button>
         </Abschnitt>
+
+        {/* Abschnitt 5: App zurücksetzen — nur im Demo-Modus sichtbar.
+            Im Supabase-Betrieb liegen die Daten sicher auf dem Server und
+            werden hier nicht angefasst. */}
+        {isDemoMode && (
+          <Abschnitt titel="App zurücksetzen">
+            <p className="text-[15px] text-ink-soft">
+              Löscht alle Einträge, deine Adresse und gespeicherte Fotos auf
+              diesem Gerät. Danach startet QuittyPro wie neu — mit der
+              Adress-Einrichtung.
+            </p>
+            <button
+              type="button"
+              onClick={() => setResetDialogOffen(true)}
+              className="mt-2 flex h-12 items-center gap-2 text-[17px] font-bold text-danger"
+            >
+              <Trash2 className="h-5 w-5 shrink-0" aria-hidden="true" />
+              Alle Daten löschen & neu starten
+            </button>
+          </Abschnitt>
+        )}
       </motion.div>
 
       {/* Footer-Zeile */}
@@ -780,6 +804,20 @@ export default function Einstellungen() {
         onSchliessen={() => setSheetOffen(false)}
       />
       <HomescreenDialog offen={dialogOffen} onSchliessen={() => setDialogOffen(false)} />
+      <ConfirmDialog
+        offen={resetDialogOffen}
+        titel="Wirklich alles löschen?"
+        bestaetigenLabel="Ja, alles löschen"
+        gefahr
+        onBestaetigen={() => {
+          resetDemoDaten()
+          window.location.reload()
+        }}
+        onAbbrechen={() => setResetDialogOffen(false)}
+      >
+        Alle Einträge, deine Adresse und gespeicherte Fotos werden von diesem
+        Gerät entfernt. Das kann nicht rückgängig gemacht werden.
+      </ConfirmDialog>
     </div>
   )
 }

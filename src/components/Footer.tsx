@@ -47,25 +47,26 @@ export default function Footer() {
       className="fixed inset-x-0 bottom-0 z-50 border-t border-line bg-paper-raised pb-safe lg:hidden"
       aria-label="Hauptnavigation"
     >
+      {/* FAB hängt direkt an der Bar — so ist er garantiert exakt mittig,
+          unabhängig von der Breite der Tabs links/rechts */}
+      {!unterseite && (
+        <motion.button
+          type="button"
+          aria-label="Neuer Eintrag"
+          onClick={() => setSheetOffen(true)}
+          initial={{ scale: 0 }}
+          animate={{ scale: 1 }}
+          transition={{ type: 'spring', stiffness: 400, damping: 20, delay: 0.3 }}
+          whileTap={{ scale: 0.92 }}
+          className="absolute left-1/2 top-0 z-10 flex h-16 w-16 -translate-x-1/2 -translate-y-5 items-center justify-center rounded-full bg-brand text-white shadow-fab"
+        >
+          <Plus className="h-7 w-7" strokeWidth={2} />
+        </motion.button>
+      )}
       <div className="relative flex h-16 items-stretch">
         <Tab zu="/" label="Einträge" icon={List} aktiv={pathname === '/'} />
         {/* Mitte: Platz für den FAB */}
-        <div className="relative flex-1">
-          {!unterseite && (
-            <motion.button
-              type="button"
-              aria-label="Neuer Eintrag"
-              onClick={() => setSheetOffen(true)}
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ type: 'spring', stiffness: 400, damping: 20, delay: 0.3 }}
-              whileTap={{ scale: 0.92 }}
-              className="absolute left-1/2 top-0 flex h-16 w-16 -translate-x-1/2 -translate-y-5 items-center justify-center rounded-full bg-brand text-white shadow-fab"
-            >
-              <Plus className="h-7 w-7" strokeWidth={2} />
-            </motion.button>
-          )}
-        </div>
+        <div className="flex-1" aria-hidden="true" />
         <Tab
           zu="/auswertung"
           label="Auswertung"

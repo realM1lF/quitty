@@ -37,6 +37,17 @@ function uuid(): string {
 
 // ---------- Demo-Modus (localStorage) ----------
 
+/** Löscht alle lokalen QuittyPro-Daten (Einträge, Einstellungen, Fotos, Caches).
+ *  Nur für den Demo-Modus gedacht — danach startet die App wieder mit Onboarding. */
+export function resetDemoDaten(): void {
+  const zuLoeschen: string[] = []
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i)
+    if (key?.startsWith('quittypro:')) zuLoeschen.push(key)
+  }
+  zuLoeschen.forEach((key) => localStorage.removeItem(key))
+}
+
 function lsReadReceipts(): Receipt[] {
   try {
     return JSON.parse(localStorage.getItem(LS_RECEIPTS) ?? '[]') as Receipt[]
