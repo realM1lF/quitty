@@ -257,3 +257,20 @@ export async function getFotoUrl(path: string): Promise<string | null> {
   if (error) return null
   return data.signedUrl
 }
+
+/** Löscht ein Belegfoto (Storage-Objekt bzw. Demo-Eintrag). Best effort. */
+export async function deleteBelegFoto(path: string): Promise<void> {
+  if (isDemoMode) {
+    const fotos = lsReadFotos()
+    if (path in fotos) {
+      delete fotos[path]
+      localStorage.setItem(LS_FOTOS, JSON.stringify(fotos))
+    }
+    return
+  }
+  try {
+    await supabase!.storage.from('belege').remove([path])
+  } catch {
+    // Foto-Löschen ist best effort — der Eintrag ist zu diesem Zeitpunkt schon weg
+  }
+}
