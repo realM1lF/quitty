@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 360" fill="none">
+  <!-- Leere-Zustände: aufgeschlagenes liniertes Kassenbuch + Bleistift + Quittungsrolle.
+       Strichzeichnung, Linien #1E5B43, Akzente (Buchlinien, Summenstrich) #B08C3D. -->
+  <g stroke-linecap="round" stroke-linejoin="round">
+    <!-- Buch: linke Seite -->
+    <path d="M 96 108
+             C 130 96, 172 94, 232 108
+             L 232 268
+             C 172 254, 130 256, 96 268
+             Z"
+          stroke="#1E5B43" stroke-width="6" />
+    <!-- Buch: rechte Seite -->
+    <path d="M 232 108
+             C 292 94, 334 96, 368 108
+             L 368 268
+             C 334 256, 292 254, 232 268"
+          stroke="#1E5B43" stroke-width="6" />
+    <!-- Buchrücken -->
+    <path d="M 232 108 L 232 268" stroke="#1E5B43" stroke-width="6" />
+    <!-- Linien linke Seite (ochre, „Heftlinien") -->
+    <path d="M 116 140 C 150 132, 184 131, 214 138" stroke="#B08C3D" stroke-width="4" opacity="0.9" />
+    <path d="M 116 168 C 150 160, 184 159, 214 166" stroke="#B08C3D" stroke-width="4" opacity="0.9" />
+    <path d="M 116 196 C 150 188, 184 187, 214 194" stroke="#B08C3D" stroke-width="4" opacity="0.9" />
+    <!-- Linien rechte Seite -->
+    <path d="M 250 138 C 280 131, 314 132, 348 140" stroke="#B08C3D" stroke-width="4" opacity="0.9" />
+    <path d="M 250 166 C 280 159, 314 160, 348 168" stroke="#B08C3D" stroke-width="4" opacity="0.9" />
+    <!-- Summenstrich rechte Seite (doppelt, wie im Kassenbuch) -->
+    <path d="M 250 206 C 280 199, 314 200, 348 208" stroke="#B08C3D" stroke-width="5" />
+    <path d="M 250 218 C 280 211, 314 212, 348 220" stroke="#B08C3D" stroke-width="5" />
+    <!-- Bleistift über dem Buch, leicht schräg -->
+    <g transform="rotate(-18 330 70)">
+      <rect x="282" y="58" width="120" height="16" rx="4" stroke="#1E5B43" stroke-width="5" />
+      <path d="M 282 58 L 262 66 L 282 74 Z" stroke="#1E5B43" stroke-width="5" />
+      <circle cx="266" cy="66" r="2.5" fill="#1E5B43" />
+      <path d="M 392 58 L 402 58 L 402 74 L 392 74" stroke="#1E5B43" stroke-width="5" />
+    </g>
+    <!-- Quittungsrolle links unten -->
+    <g>
+      <path d="M 70 296
+               C 70 282, 84 274, 100 274
+               L 150 274
+               C 166 274, 178 284, 178 298
+               L 178 330
+               C 178 342, 168 350, 156 350
+               L 70 350 Z"
+            stroke="#1E5B43" stroke-width="6" />
+      <ellipse cx="124" cy="294" rx="26" ry="18" stroke="#1E5B43" stroke-width="5" />
+      <ellipse cx="124" cy="294" rx="11" ry="7" stroke="#1E5B43" stroke-width="4" />
+      <path d="M 88 324 L 140 324" stroke="#B08C3D" stroke-width="4" opacity="0.9" />
+      <path d="M 88 338 L 128 338" stroke="#B08C3D" stroke-width="4" opacity="0.9" />
+    </g>
+  </g>
+</svg>
