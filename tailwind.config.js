@@ -5,6 +5,18 @@ module.exports = {
   theme: {
     extend: {
       colors: {
+        // QuittyPro Design-Tokens (design.md §2.1)
+        paper: '#F7F4EA',
+        'paper-raised': '#FDFCF7',
+        ink: '#22281F',
+        'ink-soft': '#6B7263',
+        brand: '#1E5B43',
+        'brand-soft': '#E3EDE5',
+        ochre: '#B08C3D',
+        warn: '#C46A1B',
+        danger: '#A63D2F',
+        line: '#DDD6C4',
+
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
@@ -49,6 +61,11 @@ module.exports = {
           ring: "hsl(var(--sidebar-ring))",
         },
       },
+      fontFamily: {
+        sans: ['"Atkinson Hyperlegible"', 'system-ui', 'sans-serif'],
+        serif: ['Fraunces', 'Georgia', 'serif'],
+        hand: ['Caveat', 'cursive'],
+      },
       borderRadius: {
         xl: "calc(var(--radius) + 4px)",
         lg: "var(--radius)",
@@ -58,6 +75,8 @@ module.exports = {
       },
       boxShadow: {
         xs: "0 1px 2px 0 rgb(0 0 0 / 0.05)",
+        fab: '0 2px 8px rgba(34,40,31,.18)',
+        sheet: '0 -4px 24px rgba(34,40,31,.14)',
       },
       keyframes: {
         "accordion-down": {
