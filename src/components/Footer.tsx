@@ -48,20 +48,26 @@ export default function Footer() {
       aria-label="Hauptnavigation"
     >
       {/* FAB hängt direkt an der Bar — so ist er garantiert exakt mittig,
-          unabhängig von der Breite der Tabs links/rechts */}
+          unabhängig von der Breite der Tabs links/rechts.
+          WICHTIG: Die Zentrierung (-translate-x-1/2) sitzt auf einem statischen
+          Wrapper, NICHT auf dem motion.button — Framer Motion überschreibt das
+          CSS-transform-Property mit seinem eigenen Inline-Style, Tailwind-
+          Translate-Klassen gingen sonst verloren (Button stünde 32px zu weit rechts). */}
       {!unterseite && (
-        <motion.button
-          type="button"
-          aria-label="Neuer Eintrag"
-          onClick={() => setSheetOffen(true)}
-          initial={{ scale: 0 }}
-          animate={{ scale: 1 }}
-          transition={{ type: 'spring', stiffness: 400, damping: 20, delay: 0.3 }}
-          whileTap={{ scale: 0.92 }}
-          className="absolute left-1/2 top-0 z-10 flex h-16 w-16 -translate-x-1/2 -translate-y-5 items-center justify-center rounded-full bg-brand text-white shadow-fab"
-        >
-          <Plus className="h-7 w-7" strokeWidth={2} />
-        </motion.button>
+        <div className="absolute left-1/2 top-0 z-10 -translate-x-1/2 -translate-y-5">
+          <motion.button
+            type="button"
+            aria-label="Neuer Eintrag"
+            onClick={() => setSheetOffen(true)}
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ type: 'spring', stiffness: 400, damping: 20, delay: 0.3 }}
+            whileTap={{ scale: 0.92 }}
+            className="flex h-16 w-16 items-center justify-center rounded-full bg-brand text-white shadow-fab"
+          >
+            <Plus className="h-7 w-7" strokeWidth={2} />
+          </motion.button>
+        </div>
       )}
       <div className="relative flex h-16 items-stretch">
         <Tab zu="/" label="Einträge" icon={List} aktiv={pathname === '/'} />

@@ -117,7 +117,7 @@ export default function Login() {
             QuittyPro
           </motion.h1>
           <motion.p
-            className="translate-x-1 font-hand text-[22px] text-brand"
+            className="ml-1 font-hand text-[22px] text-brand"
             initial={{ opacity: 0, rotate: -4 }}
             animate={{ opacity: 1, rotate: 0 }}
             transition={{ duration: 0.4, delay: 0.3 }}
