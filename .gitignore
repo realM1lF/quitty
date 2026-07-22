@@ -4,3 +4,6 @@ dist
 .env
 src/lib/vfs-fonts.ts
 package-lock.json
+public/icon-192.png
+public/icon-512.png
+public/apple-touch-icon.png
