@@ -78,12 +78,17 @@ function Sidebar() {
   )
 }
 
-/** Schlichter Kopf für Unterseiten (/neu, /eintrag/:id) — nur Mobile.
+/** Schlichter Kopf für Unterseiten (/neu, /eintrag/:id, /einstellungen) — nur Mobile.
  *  Die Unterseite kann über den UnterseitenKopfContext eine rechte Aktion
- *  setzen und den Zurück-Button abfangen (siehe kopf-kontext.tsx). */
-function UnterseitenKopf({ titel, steuerung }: { titel: string; steuerung: UnterseitenKopfSteuerung }) {
+ *  setzen und den Zurück-Button abfangen (siehe kopf-kontext.tsx).
+ *  Optional erzwingt zurueckZu ein festes Ziel (z. B. Einstellungen → /). */
+function UnterseitenKopf({ titel, steuerung, zurueckZu }: { titel: string; steuerung: UnterseitenKopfSteuerung; zurueckZu?: string }) {
   const navigate = useNavigate()
   const zurueck = () => {
+    if (zurueckZu) {
+      navigate(zurueckZu)
+      return
+    }
     if (steuerung.onZurueck?.()) return
     navigate(-1)
   }
@@ -110,10 +115,19 @@ function UnterseitenKopf({ titel, steuerung }: { titel: string; steuerung: Unter
 export default function Layout() {
   const { isLoading, isAuthenticated, isDemoMode, needsOnboarding } = useAuth()
   const { pathname } = useLocation()
-  const unterseite = pathname.startsWith('/neu') || pathname.startsWith('/eintrag/')
-  const unterseitenTitel = pathname.startsWith('/neu') ? 'Neuer Eintrag' : 'Eintrag'
+  const unterseite =
+    pathname.startsWith('/neu') ||
+    pathname.startsWith('/eintrag/') ||
+    pathname.startsWith('/einstellungen')
+  const unterseitenTitel = pathname.startsWith('/neu')
+    ? 'Neuer Eintrag'
+    : pathname.startsWith('/einstellungen')
+      ? 'Einstellungen'
+      : 'Eintrag'
   // Von der aktiven Unterseite registrierte Kopf-Steuerung (Aktion + Zurück-Abfangen)
   const [kopfSteuerung, setKopfSteuerung] = useState<UnterseitenKopfSteuerung>({})
+  // Einstellungen ist eine Hauptseite: Zurück-Pfeil führt immer zur Liste
+  const unterseitenZurueck = pathname.startsWith('/einstellungen') ? '/' : undefined
 
   if (isLoading) {
     return (
@@ -133,7 +147,7 @@ export default function Layout() {
         {isDemoMode && <DemoBanner />}
         <UnterseitenKopfContext.Provider value={setKopfSteuerung}>
           {unterseite ? (
-            <UnterseitenKopf titel={unterseitenTitel} steuerung={kopfSteuerung} />
+            <UnterseitenKopf titel={unterseitenTitel} steuerung={kopfSteuerung} zurueckZu={unterseitenZurueck} />
           ) : (
             <Navbar />
           )}

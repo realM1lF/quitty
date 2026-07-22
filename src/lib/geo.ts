@@ -94,7 +94,8 @@ export async function geocode(ziel: GeoZiel): Promise<LatLng | null> {
     await nominatimThrottle()
     const res = await fetch(
       `${NOMINATIM_URL}?format=json&countrycodes=de&limit=1&q=${encodeURIComponent(query)}`,
-      { headers: { Accept: 'application/json' } },
+      // Timeout, damit die UI bei hängender Verbindung nicht dauerhaft auf „prüft" steht
+      { headers: { Accept: 'application/json' }, signal: AbortSignal.timeout(12_000) },
     )
     if (!res.ok) return null
     const json = (await res.json()) as Array<{ lat: string; lon: string }>
@@ -118,6 +119,7 @@ async function routeKm(von: LatLng, nach: LatLng): Promise<number | null> {
   try {
     const res = await fetch(
       `${OSRM_URL}/${von.lng},${von.lat};${nach.lng},${nach.lat}?overview=false`,
+      { signal: AbortSignal.timeout(12_000) },
     )
     if (!res.ok) return null
     const json = (await res.json()) as { routes?: Array<{ distance: number }> }
