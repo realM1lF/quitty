@@ -5,12 +5,15 @@
 // Zusätzlich: Login-Gate, Onboarding-Gate (Overlay bei fehlenden Settings),
 // dezenter Demo-Modus-Banner, Safe-Area-Insets.
 
+import { useState } from 'react'
 import { Link, Navigate, Outlet, useLocation, useNavigate } from 'react-router'
 import { AnimatePresence, motion } from 'framer-motion'
 import { BarChart3, ChevronLeft, List, Plus, Settings as SettingsIcon } from 'lucide-react'
 import Navbar from './Navbar'
 import Footer from './Footer'
 import Onboarding from '@/pages/Onboarding'
+import { UnterseitenKopfContext } from './kopf-kontext'
+import type { UnterseitenKopfSteuerung } from './kopf-kontext'
 import { useAuth } from '@/lib/auth'
 import { cn } from '@/lib/utils'
 
@@ -75,21 +78,30 @@ function Sidebar() {
   )
 }
 
-/** Schlichter Kopf für Unterseiten (/neu, /eintrag/:id) — nur Mobile */
-function UnterseitenKopf({ titel }: { titel: string }) {
+/** Schlichter Kopf für Unterseiten (/neu, /eintrag/:id) — nur Mobile.
+ *  Die Unterseite kann über den UnterseitenKopfContext eine rechte Aktion
+ *  setzen und den Zurück-Button abfangen (siehe kopf-kontext.tsx). */
+function UnterseitenKopf({ titel, steuerung }: { titel: string; steuerung: UnterseitenKopfSteuerung }) {
   const navigate = useNavigate()
+  const zurueck = () => {
+    if (steuerung.onZurueck?.()) return
+    navigate(-1)
+  }
   return (
     <header className="sticky top-0 z-50 border-b border-line bg-paper pt-safe lg:hidden">
       <div className="flex h-14 items-center px-2">
         <button
           type="button"
-          onClick={() => navigate(-1)}
+          onClick={zurueck}
           aria-label="Zurück"
           className="flex h-12 w-12 items-center justify-center text-ink"
         >
           <ChevronLeft className="h-6 w-6" strokeWidth={2} />
         </button>
         <h1 className="font-serif text-[20px] text-ink">{titel}</h1>
+        {steuerung.aktion != null && (
+          <div className="ml-auto flex items-center">{steuerung.aktion}</div>
+        )}
       </div>
     </header>
   )
@@ -100,6 +112,8 @@ export default function Layout() {
   const { pathname } = useLocation()
   const unterseite = pathname.startsWith('/neu') || pathname.startsWith('/eintrag/')
   const unterseitenTitel = pathname.startsWith('/neu') ? 'Neuer Eintrag' : 'Eintrag'
+  // Von der aktiven Unterseite registrierte Kopf-Steuerung (Aktion + Zurück-Abfangen)
+  const [kopfSteuerung, setKopfSteuerung] = useState<UnterseitenKopfSteuerung>({})
 
   if (isLoading) {
     return (
@@ -117,10 +131,16 @@ export default function Layout() {
       <Sidebar />
       <div className="lg:pl-[260px]">
         {isDemoMode && <DemoBanner />}
-        {unterseite ? <UnterseitenKopf titel={unterseitenTitel} /> : <Navbar />}
-        <main className="mx-auto w-full max-w-[960px] pb-[calc(96px+env(safe-area-inset-bottom))] lg:pb-12">
-          <Outlet />
-        </main>
+        <UnterseitenKopfContext.Provider value={setKopfSteuerung}>
+          {unterseite ? (
+            <UnterseitenKopf titel={unterseitenTitel} steuerung={kopfSteuerung} />
+          ) : (
+            <Navbar />
+          )}
+          <main className="mx-auto w-full max-w-[960px] pb-[calc(96px+env(safe-area-inset-bottom))] lg:pb-12">
+            <Outlet />
+          </main>
+        </UnterseitenKopfContext.Provider>
         <Footer />
       </div>
       {/* Onboarding-Gate: über der App, bis die Adresse eingetragen ist */}
