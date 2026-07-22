@@ -32,9 +32,11 @@ export default function Login() {
   const reducedMotion = useReducedMotion()
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
-  const { isAuthenticated, isLoading, isDemoMode, sendMagicLink } = useAuth()
+  const { isAuthenticated, isLoading, isDemoMode, sendMagicLink, signInWithPassword } = useAuth()
 
   const [email, setEmail] = useState('')
+  const [passwort, setPasswort] = useState('')
+  const [passwortModus, setPasswortModus] = useState(false)
   const [gesendet, setGesendet] = useState(false)
   const [laedt, setLaedt] = useState(false)
   const [fehler, setFehler] = useState<string | null>(null)
@@ -59,12 +61,20 @@ export default function Login() {
       setFehler('Bitte eine gültige E-Mail-Adresse eingeben.')
       return
     }
+    if (passwortModus && !passwort) {
+      setFehler('Bitte dein Passwort eingeben.')
+      return
+    }
     setFehler(null)
     setLaedt(true)
     try {
-      await sendMagicLink(adresse)
-      setGesendet(true)
-      setSperre(30)
+      if (passwortModus) {
+        await signInWithPassword(adresse, passwort)
+      } else {
+        await sendMagicLink(adresse)
+        setGesendet(true)
+        setSperre(30)
+      }
     } catch (e) {
       setFehler(e instanceof Error ? e.message : 'Das hat nicht geklappt — bitte versuche es gleich noch einmal.')
     } finally {
@@ -207,14 +217,47 @@ export default function Login() {
                     warn={Boolean(fehler)}
                     hinweis={fehler ?? undefined}
                   />
+                  {passwortModus && (
+                    <div className="mt-3">
+                      <TextField
+                        label="Passwort"
+                        type="password"
+                        autoComplete="current-password"
+                        placeholder="Dein Passwort"
+                        value={passwort}
+                        onChange={(e) => {
+                          setPasswort(e.target.value)
+                          setFehler(null)
+                        }}
+                      />
+                    </div>
+                  )}
                   <div className="mt-3">
                     <PrimarButton type="submit" loading={laedt} icon={<Mail className="h-5 w-5" />}>
-                      {laedt ? 'Wird gesendet …' : 'Link zum Anmelden senden'}
+                      {laedt
+                        ? passwortModus
+                          ? 'Wird angemeldet …'
+                          : 'Wird gesendet …'
+                        : passwortModus
+                          ? 'Anmelden'
+                          : 'Link zum Anmelden senden'}
                     </PrimarButton>
                   </div>
-                  <p className="mt-3 text-center text-[13px] text-ink-soft">
-                    Du bekommst eine E-Mail mit einem Anmelde-Link — ganz ohne Passwort.
-                  </p>
+                  {!passwortModus && (
+                    <p className="mt-3 text-center text-[13px] text-ink-soft">
+                      Du bekommst eine E-Mail mit einem Anmelde-Link — ganz ohne Passwort.
+                    </p>
+                  )}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setPasswortModus((m) => !m)
+                      setFehler(null)
+                    }}
+                    className="mx-auto mt-4 flex h-12 items-center justify-center px-4 text-[13px] text-ink-soft underline decoration-line underline-offset-4"
+                  >
+                    {passwortModus ? 'Zurück zum Anmelde-Link' : 'Mit Passwort anmelden'}
+                  </button>
                 </motion.form>
               )}
             </AnimatePresence>

@@ -27,6 +27,7 @@ interface AuthContextValue {
   needsOnboarding: boolean
   refreshSettings: () => Promise<void>
   sendMagicLink: (email: string) => Promise<void>
+  signInWithPassword: (email: string, password: string) => Promise<void>
   signOut: () => Promise<void>
 }
 
@@ -94,6 +95,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (error) throw new Error('Das hat nicht geklappt — bitte versuche es gleich noch einmal.')
   }, [])
 
+  const signInWithPassword = useCallback(async (email: string, password: string) => {
+    if (!supabase) throw new Error('Anmeldung ist im Demo-Modus nicht nötig.')
+    const { error } = await supabase.auth.signInWithPassword({ email, password })
+    if (error) throw new Error('E-Mail oder Passwort stimmt nicht — bitte prüfe deine Eingabe.')
+  }, [])
+
   const signOut = useCallback(async () => {
     if (supabase) await supabase.auth.signOut()
     setUser(isDemoMode ? DEMO_USER : null)
@@ -109,9 +116,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       needsOnboarding: Boolean(user) && !settingsComplete(settings),
       refreshSettings: loadSettings,
       sendMagicLink,
+      signInWithPassword,
       signOut,
     }),
-    [user, isLoading, settings, loadSettings, sendMagicLink, signOut],
+    [user, isLoading, settings, loadSettings, sendMagicLink, signInWithPassword, signOut],
   )
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
