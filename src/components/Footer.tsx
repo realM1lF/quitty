@@ -1,7 +1,7 @@
 // Mobile Bottom Bar (design.md §3): 64 px + Safe-Area, paper-raised, oben 1 px line.
 // Links Tab „Einträge" → /, Mitte FAB „+" (64 px, 20 px nach oben versetzt),
 // rechts Tab „Auswertung" → /auswertung. Aktiv: brand; inaktiv: ink-soft.
-// Auf Unterseiten (/neu, /eintrag/:id) bleibt die Bar, der FAB ist ausgeblendet.
+// Auf Unterseiten (/neu, /eintrag/:id, /einstellungen) bleibt die Bar, der FAB ist ausgeblendet.
 // Nur < 1024 px sichtbar (Desktop hat die Sidebar).
 
 import { Link, useLocation, useNavigate } from 'react-router'
@@ -35,7 +35,10 @@ function Tab({ zu, label, icon: Icon, aktiv }: TabProps) {
 export default function Footer() {
   const { pathname } = useLocation()
   const navigate = useNavigate()
-  const unterseite = pathname.startsWith('/neu') || pathname.startsWith('/eintrag/')
+  const unterseite =
+    pathname.startsWith('/neu') ||
+    pathname.startsWith('/eintrag/') ||
+    pathname.startsWith('/einstellungen')
 
   return (
     <nav

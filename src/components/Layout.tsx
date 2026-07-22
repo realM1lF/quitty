@@ -75,15 +75,15 @@ function Sidebar() {
   )
 }
 
-/** Schlichter Kopf für Unterseiten (/neu, /eintrag/:id) — nur Mobile */
-function UnterseitenKopf({ titel }: { titel: string }) {
+/** Schlichter Kopf für Unterseiten (/neu, /eintrag/:id, /einstellungen) — nur Mobile */
+function UnterseitenKopf({ titel, zurueckZu }: { titel: string; zurueckZu?: string }) {
   const navigate = useNavigate()
   return (
     <header className="sticky top-0 z-50 border-b border-line bg-paper pt-safe lg:hidden">
       <div className="flex h-14 items-center px-2">
         <button
           type="button"
-          onClick={() => navigate(-1)}
+          onClick={() => (zurueckZu ? navigate(zurueckZu) : navigate(-1))}
           aria-label="Zurück"
           className="flex h-12 w-12 items-center justify-center text-ink"
         >
@@ -98,8 +98,17 @@ function UnterseitenKopf({ titel }: { titel: string }) {
 export default function Layout() {
   const { isLoading, isAuthenticated, isDemoMode, needsOnboarding } = useAuth()
   const { pathname } = useLocation()
-  const unterseite = pathname.startsWith('/neu') || pathname.startsWith('/eintrag/')
-  const unterseitenTitel = pathname.startsWith('/neu') ? 'Neuer Eintrag' : 'Eintrag'
+  const unterseite =
+    pathname.startsWith('/neu') ||
+    pathname.startsWith('/eintrag/') ||
+    pathname.startsWith('/einstellungen')
+  const unterseitenTitel = pathname.startsWith('/neu')
+    ? 'Neuer Eintrag'
+    : pathname.startsWith('/einstellungen')
+      ? 'Einstellungen'
+      : 'Eintrag'
+  // Einstellungen ist eine Hauptseite: Zurück-Pfeil führt immer zur Liste
+  const unterseitenZurueck = pathname.startsWith('/einstellungen') ? '/' : undefined
 
   if (isLoading) {
     return (
@@ -117,7 +126,7 @@ export default function Layout() {
       <Sidebar />
       <div className="lg:pl-[260px]">
         {isDemoMode && <DemoBanner />}
-        {unterseite ? <UnterseitenKopf titel={unterseitenTitel} /> : <Navbar />}
+        {unterseite ? <UnterseitenKopf titel={unterseitenTitel} zurueckZu={unterseitenZurueck} /> : <Navbar />}
         <main className="mx-auto w-full max-w-[960px] pb-[calc(96px+env(safe-area-inset-bottom))] lg:pb-12">
           <Outlet />
         </main>

@@ -6,7 +6,8 @@ import { createContext, useCallback, useContext, useMemo, useRef, useState } fro
 import type { ReactNode } from 'react'
 
 interface SnackbarContextValue {
-  zeigeSnackbar: (text: string) => void
+  /** dauerMs optional (Standard 3000 ms) */
+  zeigeSnackbar: (text: string, dauerMs?: number) => void
 }
 
 const SnackbarContext = createContext<SnackbarContextValue | null>(null)
@@ -17,10 +18,10 @@ export function SnackbarProvider({ children }: { children: ReactNode }) {
   const [meldung, setMeldung] = useState<{ id: number; text: string } | null>(null)
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null)
 
-  const zeigeSnackbar = useCallback((text: string) => {
+  const zeigeSnackbar = useCallback((text: string, dauerMs = 3000) => {
     if (timer.current) clearTimeout(timer.current)
     setMeldung({ id: naechsteId++, text })
-    timer.current = setTimeout(() => setMeldung(null), 3000)
+    timer.current = setTimeout(() => setMeldung(null), dauerMs)
   }, [])
 
   const value = useMemo(() => ({ zeigeSnackbar }), [zeigeSnackbar])

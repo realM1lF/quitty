@@ -198,8 +198,9 @@ export async function saveSettings(input: SettingsInput): Promise<Settings> {
       home_strasse: input.home_strasse ?? prev?.home_strasse ?? null,
       home_plz: input.home_plz ?? prev?.home_plz ?? null,
       home_ort: input.home_ort ?? prev?.home_ort ?? null,
-      home_lat: input.home_lat ?? prev?.home_lat ?? null,
-      home_lng: input.home_lng ?? prev?.home_lng ?? null,
+      // explizites null löscht Koordinaten (z. B. Geocoding fehlgeschlagen), undefined lässt sie unverändert
+      home_lat: input.home_lat !== undefined ? input.home_lat : (prev?.home_lat ?? null),
+      home_lng: input.home_lng !== undefined ? input.home_lng : (prev?.home_lng ?? null),
       km_pauschale: input.km_pauschale ?? prev?.km_pauschale ?? 0.3,
       onboarded: input.onboarded ?? prev?.onboarded ?? false,
       updated_at: now(),
