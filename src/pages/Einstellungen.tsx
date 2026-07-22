@@ -788,7 +788,7 @@ export default function Einstellungen() {
 
       {/* Footer-Zeile */}
       <p className="mt-8 pb-4 text-center text-[13px] text-ink-soft">
-        QuittyPro · Version 1.0 ·{' '}
+        QuittyPro · Version 1.1 ·{' '}
         <span className="font-hand text-[17px] text-brand">mit Sorgfalt für Paula gemacht</span>
       </p>
 
