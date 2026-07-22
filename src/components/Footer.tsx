@@ -1,12 +1,14 @@
 // Mobile Bottom Bar (design.md §3): 64 px + Safe-Area, paper-raised, oben 1 px line.
-// Links Tab „Einträge" → /, Mitte FAB „+" (64 px, 20 px nach oben versetzt),
+// Links Tab „Einträge" → /, Mitte FAB „+" (64 px, 20 px nach oben versetzt) → AuswahlSheet,
 // rechts Tab „Auswertung" → /auswertung. Aktiv: brand; inaktiv: ink-soft.
 // Auf Unterseiten (/neu, /eintrag/:id) bleibt die Bar, der FAB ist ausgeblendet.
 // Nur < 1024 px sichtbar (Desktop hat die Sidebar).
 
-import { Link, useLocation, useNavigate } from 'react-router'
+import { useState } from 'react'
+import { Link, useLocation } from 'react-router'
 import { motion } from 'framer-motion'
 import { BarChart3, List, Plus } from 'lucide-react'
+import AuswahlSheet from './AuswahlSheet'
 import { cn } from '@/lib/utils'
 
 interface TabProps {
@@ -34,7 +36,7 @@ function Tab({ zu, label, icon: Icon, aktiv }: TabProps) {
 
 export default function Footer() {
   const { pathname } = useLocation()
-  const navigate = useNavigate()
+  const [sheetOffen, setSheetOffen] = useState(false)
   const unterseite = pathname.startsWith('/neu') || pathname.startsWith('/eintrag/')
 
   return (
@@ -50,7 +52,7 @@ export default function Footer() {
             <motion.button
               type="button"
               aria-label="Neuer Eintrag"
-              onClick={() => navigate('/neu')}
+              onClick={() => setSheetOffen(true)}
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               transition={{ type: 'spring', stiffness: 400, damping: 20, delay: 0.3 }}
@@ -68,6 +70,7 @@ export default function Footer() {
           aktiv={pathname.startsWith('/auswertung')}
         />
       </div>
+      <AuswahlSheet offen={sheetOffen} onSchliessen={() => setSheetOffen(false)} />
     </nav>
   )
 }

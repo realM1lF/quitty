@@ -13,7 +13,8 @@ const OPTIONEN: Array<{ wert: Anrede; label: string }> = [
 ]
 
 interface Props {
-  value: Anrede
+  /** null = noch nichts gewählt (kein Segment aktiv, z. B. im leeren Formular) */
+  value: Anrede | null
   onChange: (wert: Anrede) => void
   label?: string
 }
